@@ -10,10 +10,6 @@ import CommentFeed from "./CommentFeed";
 import { getPost } from "../../actions/postAction";
 
 class Post extends Component {
-	constructor(props) {
-		super(props);
-	}
-
 	componentDidMount() {
 		this.props.getPost(this.props.match.params.id);
 	}

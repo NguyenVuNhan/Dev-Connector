@@ -14,6 +14,4 @@ PostFeed.propTypes = {
 	posts: PropTypes.array.isRequired
 };
 
-const mapStateToProps = state => ({});
-
 export default PostFeed;

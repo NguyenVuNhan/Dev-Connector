@@ -8,10 +8,6 @@ import Spinner from "../../components/common/Spinner";
 import { getPosts } from "../../actions/postAction";
 
 class Posts extends Component {
-	constructor(props) {
-		super(props);
-	}
-
 	componentDidMount() {
 		this.props.getPosts();
 	}
