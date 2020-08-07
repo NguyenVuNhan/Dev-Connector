@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import isEmpty from "../../validation/is-empty";
 import { createProfile, getCurrentProfile } from "../../actions/profileAction";
@@ -16,6 +16,7 @@ class EditProfile extends Component {
 		super(props);
 
 		this.state = {
+			filledExistData: false,
 			displaySocialInputs: false,
 			handle: "",
 			company: "",
@@ -41,58 +42,69 @@ class EditProfile extends Component {
 		this.props.getCurrentProfile();
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.errors) {
-			this.setState({ errors: nextProps.errors });
+	static getDerivedStateFromProps(props, state) {
+		let newState = {};
+		if (props.errors) {
+			newState.errors = props.errors;
 		}
 
-		if (nextProps.profile.profile) {
-			const profile = nextProps.profile.profile;
+		if (!state.filledExistData) {
+			if (props.profile) {
+				if (props.profile.profile) {
+					const profile = props.profile.profile;
+					const skillsCSV = profile.skills.join(",");
 
-			const skillsCSV = profile.skills.join(",");
+					profile.company = !isEmpty(profile.company)
+						? profile.company
+						: "";
+					profile.website = !isEmpty(profile.website)
+						? profile.website
+						: "";
+					profile.location = !isEmpty(profile.location)
+						? profile.location
+						: "";
+					profile.githubUserName = !isEmpty(profile.githubUserName)
+						? profile.githubUserName
+						: "";
+					profile.bio = !isEmpty(profile.bio) ? profile.bio : "";
+					profile.social = !isEmpty(profile.social)
+						? profile.social
+						: {};
+					profile.twitter = !isEmpty(profile.social.twitter)
+						? profile.social.twitter
+						: "";
+					profile.facebook = !isEmpty(profile.social.facebook)
+						? profile.social.facebook
+						: "";
+					profile.linkedin = !isEmpty(profile.social.linkedin)
+						? profile.social.linkedin
+						: "";
+					profile.youtube = !isEmpty(profile.social.youtube)
+						? profile.social.youtube
+						: "";
+					profile.instagram = !isEmpty(profile.social.instagram)
+						? profile.social.instagram
+						: "";
 
-			profile.company = !isEmpty(profile.company) ? profile.company : "";
-			profile.website = !isEmpty(profile.website) ? profile.website : "";
-			profile.location = !isEmpty(profile.location)
-				? profile.location
-				: "";
-			profile.githubusername = !isEmpty(profile.githubusername)
-				? profile.githubusername
-				: "";
-			profile.bio = !isEmpty(profile.bio) ? profile.bio : "";
-			profile.social = !isEmpty(profile.social) ? profile.social : {};
-			profile.twitter = !isEmpty(profile.social.twitter)
-				? profile.social.twitter
-				: "";
-			profile.facebook = !isEmpty(profile.social.facebook)
-				? profile.social.facebook
-				: "";
-			profile.linkedin = !isEmpty(profile.social.linkedin)
-				? profile.social.linkedin
-				: "";
-			profile.youtube = !isEmpty(profile.social.youtube)
-				? profile.social.youtube
-				: "";
-			profile.instagram = !isEmpty(profile.social.instagram)
-				? profile.social.instagram
-				: "";
-
-			// Set component fields state
-			this.setState({
-				handle: profile.handle,
-				company: profile.company,
-				website: profile.website,
-				location: profile.location,
-				status: profile.status,
-				skills: skillsCSV,
-				githubusername: profile.githubusername,
-				bio: profile.bio,
-				twitter: profile.twitter,
-				facebook: profile.facebook,
-				linkedin: profile.linkedin,
-				youtube: profile.youtube
-			});
+					// Set component fields state
+					newState.handle = profile.handle;
+					newState.company = profile.company;
+					newState.website = profile.website;
+					newState.location = profile.location;
+					newState.status = profile.status;
+					newState.skills = skillsCSV;
+					newState.githubUserName = profile.githubUserName;
+					newState.bio = profile.bio;
+					newState.twitter = profile.twitter;
+					newState.facebook = profile.facebook;
+					newState.linkedin = profile.linkedin;
+					newState.youtube = profile.youtube;
+					newState.filledExistData = true;
+				}
+			}
 		}
+
+		return isEmpty(newState) ? null : newState;
 	}
 
 	onChange(e) {
@@ -109,7 +121,7 @@ class EditProfile extends Component {
 			location: this.state.location,
 			status: this.state.status,
 			skills: this.state.skills,
-			githubusername: this.state.githubusername,
+			githubUserName: this.state.githubUserName,
 			bio: this.state.bio,
 			twitter: this.state.twitter,
 			facebook: this.state.facebook,
@@ -190,6 +202,9 @@ class EditProfile extends Component {
 				<div className="container">
 					<div className="row">
 						<div className="col-md-8 m-auto">
+							<Link to="/dashboard" className="btn btn-light">
+								Go Back
+							</Link>
 							<h1 className="display-4 text-center">
 								Edit Profile
 							</h1>
@@ -224,7 +239,7 @@ class EditProfile extends Component {
 								/>
 								<TextFieldGroup
 									placeholder="Website"
-									name="webite"
+									name="website"
 									value={this.state.website}
 									onChange={this.onChange}
 									error={errors.website}
@@ -249,10 +264,10 @@ class EditProfile extends Component {
 								/>
 								<TextFieldGroup
 									placeholder="Github Username"
-									name="githubusername"
-									value={this.state.githubusername}
+									name="githubUserName"
+									value={this.state.githubUserName}
 									onChange={this.onChange}
-									error={errors.githubusername}
+									error={errors.githubUserName}
 									info="If you want your latest repos and a Github link, include your username"
 								/>
 								<TextAreaFieldGroup

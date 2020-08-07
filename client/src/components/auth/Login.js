@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loginUser } from "../../actions/authAction";
+import PropTypes from "prop-types";
+import { Redirect } from "react-router-dom";
+
 import TextFieldGroup from "../common/TextFieldGroup";
+import { loginUser } from "../../actions/authAction";
 
 class Login extends Component {
 	constructor() {
@@ -24,14 +26,12 @@ class Login extends Component {
 		}
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.auth.isAuthenticated) {
-			this.props.history.push("/dashboard");
+	static getDerivedStateFromProps(props, state) {
+		if (props.errors) {
+			return { errors: props.errors };
 		}
 
-		if (nextProps.errors) {
-			this.setState({ errors: nextProps.errors });
-		}
+		return null;
 	}
 
 	onChange(e) {
@@ -51,6 +51,10 @@ class Login extends Component {
 
 	render() {
 		const { errors } = this.state;
+
+		if (this.props.auth.isAuthenticated) {
+			return <Redirect to={"/dashboard"} />;
+		}
 
 		return (
 			<div className="login">
